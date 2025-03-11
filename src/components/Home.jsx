@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState,useEffect  } from 'react'
+import { useNavigate } from 'react-router-dom';
 import reactLogo from '../assets/react.svg'
 import viteLogo from '/vite.svg?url'
 import '../App.css'
@@ -8,11 +9,21 @@ import Placeholder from 'react-bootstrap/Placeholder';
 import Form from 'react-bootstrap/Form';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navb from './Navb';
+import Cookies from 'js-cookie'; // Assuming you're using js-cookie for managing cookies
+
 
 
 function Home() {
   const [count, setCount] = useState(0)
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();  
+
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (!token) {
+      navigate('/login');  
+    }
+  }, [navigate]);
 
   return (
     <>
