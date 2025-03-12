@@ -30,7 +30,19 @@ function Signup() {
                 password: password
             });
             console.log(response)
-            setMessage(response.data.message);
+            if (response.data?.status === false && response.data?.message) {
+                const messageData = response.data.message;
+                if (typeof messageData === "object") {
+                    const firstKey = Object.keys(messageData)[0]; // e.g., "username"
+                    if (messageData[firstKey] && Array.isArray(messageData[firstKey])) {
+                        setMessage(messageData[firstKey][0]); // Show the first error message
+                        return;
+                    }
+                }
+                setMessage(JSON.stringify(messageData)); // Fallback: Show the entire message object
+            } else {
+                setMessage("Signup successful!");
+            }
         } catch (error) {
             console.log(error)
             setMessage(error.response?.data?.message || "Signup failed. Please try again.");
