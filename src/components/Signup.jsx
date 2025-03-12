@@ -29,6 +29,7 @@ function Signup() {
                 username: username,
                 password: password
             });
+            console.log(response)
             setMessage(response.data.message);
         } catch (error) {
             console.log(error)
@@ -73,5 +74,3 @@ function Signup() {
 }
 
 export default Signup;
-
-// Let me know if you want me to handle loading states or redirect on successful signup! 🚀
