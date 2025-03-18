@@ -87,6 +87,11 @@ function Login() {
                     <Button variant="primary" type="submit" className='submit'>
                         Login
                     </Button>
+                    <div style={{ marginTop: "10px" }}>
+                        <a href="/forgot" style={{ textDecoration: "none", color: "#007bff" }}>
+                            Forgot Username/Password?
+                        </a>
+                    </div>
                 </Form>
             </div>
         </>
