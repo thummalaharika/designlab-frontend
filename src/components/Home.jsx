@@ -109,6 +109,9 @@ function Home() {
                 <th>Service</th>
                 <th>Product</th>
                 <th>Version</th>
+                <th>CVE-ID</th>
+                <th>Description</th>
+                <th>CVSS Score</th>
               </tr>
             </thead>
             <tbody>
@@ -118,6 +121,9 @@ function Home() {
                   <td>{result.service}</td>
                   <td>{result.product || 'N/A'}</td>
                   <td>{result.version || 'N/A'}</td>
+                  <td>{result.vuln_id || 'N/A'}</td>
+                  <td>{result.description || 'N/A'}</td>
+                  <td>{result.cvss_score || 'N/A'}</td>
                 </tr>
               ))}
             </tbody>
