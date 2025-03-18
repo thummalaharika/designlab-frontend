@@ -3,6 +3,8 @@ import Form from 'react-bootstrap/Form';
 import Navb from './Navb';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate  } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 function Signup() {
     const [email, setEmail] = useState("");
@@ -11,11 +13,20 @@ function Signup() {
     const [confirmpass, setConfirm] = useState("");
     const [isDisabled, setDisabled] = useState(true);
     const [message, setMessage] = useState("");
+    const navigate = useNavigate(); 
 
     const handleEmail = (e) => setEmail(e.target.value);
     const handleUsername = (e) => setUsername(e.target.value);
     const handlePassword = (e) => setPass(e.target.value);
     const handleConfirm = (e) => setConfirm(e.target.value);
+
+    useEffect(() => {
+            // Check if token exists in cookies
+            const token = Cookies.get('token');
+            if (token) {
+                navigate('/');  // Redirect to home if logged in
+            }
+        }, [navigate]);
 
     useEffect(() => {
         setDisabled(confirmpass !== password || !email || !username);
@@ -42,6 +53,7 @@ function Signup() {
                 setMessage(JSON.stringify(messageData)); // Fallback: Show the entire message object
             } else {
                 setMessage("Signup successful!");
+                Navigate("/login")
             }
         } catch (error) {
             console.log(error)

@@ -1,7 +1,7 @@
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Navb from './Navb';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate  } from 'react-router-dom';
 import Cookies from 'js-cookie';
@@ -11,6 +11,14 @@ function Login() {
     const [username, setUsername] = useState("");
     const [error, setError] = useState("");  // For storing error messages
     const navigate = useNavigate();  // To handle redirection
+
+    useEffect(() => {
+        // Check if token exists in cookies
+        const token = Cookies.get('token');
+        if (token) {
+            navigate('/');  // Redirect to home if logged in
+        }
+    }, [navigate]);
 
     // Handle username change
     const handleUsername = (e) => {
@@ -38,6 +46,8 @@ function Login() {
                 console.log("logged in")
                 Cookies.set('token', response.data.data.token, { expires: 7 });  // Store the token in cookies for 7 days
                 navigate('/');  
+            }else{
+                setError(response.data.message || "Invalid username or password");
             }
         } catch (error) {
             // Handle login errors (e.g., invalid credentials)
