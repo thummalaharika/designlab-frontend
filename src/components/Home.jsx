@@ -5,20 +5,21 @@ import Spinner from 'react-bootstrap/Spinner';
 import Placeholder from 'react-bootstrap/Placeholder';
 import Form from 'react-bootstrap/Form';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import * as XLSX from 'xlsx'; // Import XLSX for Excel generation
 import Navb from './Navb';
-import Cookies from 'js-cookie'; // Assuming you're using js-cookie for managing cookies
+import Cookies from 'js-cookie';
 
 function Home() {
   const [ipAddress, setIpAddress] = useState('');
   const [loading, setLoading] = useState(false);
   const [scanResults, setScanResults] = useState([]);
   const [error, setError] = useState(null);
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = Cookies.get('token');
     if (!token) {
-      navigate('/login');  
+      navigate('/login');
     }
   }, [navigate]);
 
@@ -28,15 +29,15 @@ function Home() {
       return;
     }
 
-    setLoading(true); // Set loading to true when the scan starts
-    setError(null); // Clear any previous errors
+    setLoading(true);
+    setError(null);
 
     try {
       const response = await fetch("http://127.0.0.1:8000/ipscan/", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Token ${Cookies.get('token')}` // Assuming you're sending the token in headers
+          'Authorization': `Token ${Cookies.get('token')}`
         },
         body: JSON.stringify({ ip_address: ipAddress })
       });
@@ -45,22 +46,54 @@ function Home() {
 
       if (data.status) {
         setScanResults(data.scan_results);
-        setError(null); // Clear any previous error
+        setError(null);
       } else {
         setScanResults([]);
         setError('No scan results found or invalid IP address');
       }
     } catch (error) {
       setError('Error occurred while scanning');
-      setScanResults([]); // Optionally clear scan results if there's an error
+      setScanResults([]);
     } finally {
-      setLoading(false); // Set loading to false after the response is received or after error handling
+      setLoading(false);
     }
+  };
+
+  const downloadExcel = () => {
+    if (scanResults.length === 0) {
+      alert('No data to download!');
+      return;
+    }
+
+    const headers = ["Port", "Service", "Product", "Version", "CVE-ID", "Description", "CVSS Score"];
+    const data = scanResults.map(result => ({
+      Port: result.port,
+      Service: result.service,
+      Product: result.product || 'N/A',
+      Version: result.version || 'N/A',
+      "CVE-ID": result.vuln_id || 'N/A',
+      Description: result.Description || 'N/A',
+      "CVSS Score": result.CVSS_Score || 'N/A'
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(data, { header: headers });
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Scan Results");
+
+    XLSX.writeFile(workbook, "scan_results.xlsx");
   };
 
   return (
     <>
       <Navb />
+
+      {/* Top-right corner button */}
+      <div style={{ position: "absolute", top: "10px", right: "20px" }}>
+        <Button variant="primary" onClick={downloadExcel} disabled={scanResults.length === 0}>
+          Download Excel
+        </Button>
+      </div>
+
       <div className='ip-form'>
         <h1>IP Scanner</h1>
         <Form>
@@ -122,8 +155,8 @@ function Home() {
                   <td>{result.product || 'N/A'}</td>
                   <td>{result.version || 'N/A'}</td>
                   <td>{result.vuln_id || 'N/A'}</td>
-                  <td>{result.description || 'N/A'}</td>
-                  <td>{result.cvss_score || 'N/A'}</td>
+                  <td>{result.Description || 'N/A'}</td>
+                  <td>{result.CVSS_Score || 'N/A'}</td>
                 </tr>
               ))}
             </tbody>
