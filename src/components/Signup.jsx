@@ -53,7 +53,7 @@ function Signup() {
                 setMessage(JSON.stringify(messageData)); // Fallback: Show the entire message object
             } else {
                 setMessage("Signup successful!");
-                Navigate("/login")
+                navigate("/login")
             }
         } catch (error) {
             console.log(error)
