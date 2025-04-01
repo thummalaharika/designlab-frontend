@@ -5,12 +5,14 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate  } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import ReCAPTCHA from "react-google-recaptcha";
 
 function Login() {
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
     const [error, setError] = useState("");  // For storing error messages
     const navigate = useNavigate();  // To handle redirection
+    const [captchaValue, setCaptchaValue] = useState(null);
 
     useEffect(() => {
         // Check if token exists in cookies
@@ -33,6 +35,11 @@ function Login() {
     // Handle form submission (Login)
     const handleSubmit = async (e) => {
         e.preventDefault();  // Prevent form default submission
+
+        if (!captchaValue) {
+            setError("Please complete the CAPTCHA.");
+            return;
+        }
 
         try {
             const response = await axios.post('http://127.0.0.1:8000/login/', {
@@ -83,7 +90,10 @@ function Login() {
                             onChange={handlePassword}
                         />
                     </Form.Group>
-
+                    <ReCAPTCHA
+                        sitekey="6LcHKAYrAAAAAGoO9L006SgdCv_00IM--6Q1fiSO"
+                        onChange={(value) => setCaptchaValue(value)}
+                    />
                     <Button variant="primary" type="submit" className='submit'>
                         Login
                     </Button>
