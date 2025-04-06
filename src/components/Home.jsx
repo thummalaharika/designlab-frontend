@@ -15,6 +15,14 @@ function Home() {
   const [scanResults, setScanResults] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const getSeverity = (score) => {
+    if (score >= 9.0) return { level: 'Critical', color: '#ff4d4f' };       // red
+    if (score >= 7.0) return { level: 'High', color: '#fa8c16' };           // orange
+    if (score >= 4.0) return { level: 'Medium', color: '#fadb14' };         // yellow
+    if (score >= 0.1) return { level: 'Low', color: '#52c41a' };            // green
+    return { level: 'N/A', color: '#d9d9d9' };                              // gray
+  };
+  
 
   useEffect(() => {
     const token = Cookies.get('token');
@@ -135,7 +143,7 @@ function Home() {
       {scanResults.length > 0 && (
         <div className="scan-results mt-4">
           <h3>Scan Results</h3>
-          <table className="table">
+          <table className="table" style={{"margin":"10px"}}>
             <thead>
               <tr>
                 <th>Port</th>
@@ -145,21 +153,34 @@ function Home() {
                 <th>CVE-ID</th>
                 <th>Description</th>
                 <th>CVSS Score</th>
+                <th>Severity</th>
               </tr>
             </thead>
             <tbody>
-              {scanResults.map((result, index) => (
-                <tr key={index}>
-                  <td>{result.port}</td>
-                  <td>{result.service}</td>
-                  <td>{result.product || 'N/A'}</td>
-                  <td>{result.version || 'N/A'}</td>
-                  <td>{result.vuln_id || 'N/A'}</td>
-                  <td>{result.Description || 'N/A'}</td>
-                  <td>{result.CVSS_Score || 'N/A'}</td>
-                </tr>
-              ))}
+              {scanResults.map((result, index) => {
+                const score = parseFloat(result.CVSS_Score);
+                const { level, color } = getSeverity(score);
+
+                return (
+                  <tr key={index}>
+                    <td>{result.port}</td>
+                    <td>{result.service}</td>
+                    <td>{result.product || 'N/A'}</td>
+                    <td>{result.version || 'N/A'}</td>
+                    <td>{result.vuln_id || 'N/A'}</td>
+                    <td>
+                      {result.Description 
+                        ? result.Description.split(' ').slice(0, 5).join(' ') + (result.Description.split(' ').length > 5 ? '...' : '') 
+                        : 'N/A'}
+                    </td>
+
+                    <td>{isNaN(score) ? 'N/A' : score}</td>
+                    <td style={{ backgroundColor: color, fontWeight: 'bold' }}>{level}</td>
+                  </tr>
+                );
+              })}
             </tbody>
+
           </table>
         </div>
       )}
