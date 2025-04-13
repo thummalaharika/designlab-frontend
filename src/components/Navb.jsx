@@ -22,8 +22,15 @@ function Navb() {
     // Handle the logout action
     const handleLogout = () => {
         Cookies.remove('token');  // Remove the token from cookies
+        Cookies.remove('username');
         setIsLoggedIn(false);  // Update the logged-in state
         navigate('/login');  // Redirect to the login page
+    };
+
+    const handleReset = () => {
+        // Cookies.remove('token');  // Remove the token from cookies
+        // setIsLoggedIn(false);  // Update the logged-in state
+        navigate('/reset');  // Redirect to the login page
     };
 
     return (
@@ -39,7 +46,11 @@ function Navb() {
                     </>
                 }
                 { isLoggedIn && 
-                    <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                    <>
+                        <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                        <Nav.Link onClick={handleReset}>Reset password</Nav.Link>
+                        <Navbar.Brand href="/" style={{"marginLeft":"12px"}}>Weclome, {Cookies.get('username')}</Navbar.Brand>
+                    </>
                 }
             </Nav>
             </Container>

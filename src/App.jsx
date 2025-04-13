@@ -6,6 +6,7 @@ import Login from './components/Login';
 import Signup from './components/Signup';
 import Forgot from './components/Forgot';
 import Verify from './components/Verify';
+import Reset from './components/Reset';
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/forgot" element={<Forgot />} />
         <Route path="/verify" element={<Verify />} />
+        <Route path="/reset" element={<Reset />} />
         <Route path="*" element={<h1>404 - Not Found</h1>} />
       </Routes>
     </>

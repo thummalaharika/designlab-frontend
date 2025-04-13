@@ -12,7 +12,7 @@ function Login() {
     const [username, setUsername] = useState("");
     const [error, setError] = useState("");  // For storing error messages
     const navigate = useNavigate();  // To handle redirection
-    const [captchaValue, setCaptchaValue] = useState(null);
+    // const [captchaValue, setCaptchaValue] = useState(null);
 
     useEffect(() => {
         // Check if token exists in cookies
@@ -36,10 +36,10 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();  // Prevent form default submission
 
-        if (!captchaValue) {
-            setError("Please complete the CAPTCHA.");
-            return;
-        }
+        // if (!captchaValue) {
+        //     setError("Please complete the CAPTCHA.");
+        //     return;
+        // }
 
         try {
             const response = await axios.post('http://127.0.0.1:8000/login/', {
@@ -52,6 +52,7 @@ function Login() {
             if (response.status === 200 && response.data.data.token) {
                 console.log("logged in")
                 Cookies.set('token', response.data.data.token, { expires: 7 });  // Store the token in cookies for 7 days
+                Cookies.set('username', response.data.data.username, { expires: 7 });
                 navigate('/');  
             }else{
                 setError(response.data.message || "Invalid username or password");
@@ -90,10 +91,10 @@ function Login() {
                             onChange={handlePassword}
                         />
                     </Form.Group>
-                    <ReCAPTCHA
+                    {/* <ReCAPTCHA
                         sitekey="6LcHKAYrAAAAAGoO9L006SgdCv_00IM--6Q1fiSO"
                         onChange={(value) => setCaptchaValue(value)}
-                    />
+                    /> */}
                     <Button variant="primary" type="submit" className='submit'>
                         Login
                     </Button>

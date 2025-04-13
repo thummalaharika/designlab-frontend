@@ -7,19 +7,17 @@ import { useNavigate  } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import ReCAPTCHA from "react-google-recaptcha";
 
-function Signup() {
-    const [email, setEmail] = useState("");
-    const [username, setUsername] = useState("");
+function Reset() {
     const [password, setPass] = useState("");
     const [confirmpass, setConfirm] = useState("");
-    // const [captchaValue, setCaptchaValue] = useState(null);
+    const [captchaValue, setCaptchaValue] = useState(null);
     const [message, setMessage] = useState("");
     const navigate = useNavigate(); 
 
     useEffect(() => {
         const token = Cookies.get('token');
-        if (token) {
-            navigate('/');  // Redirect to home if logged in
+        if (!token) {
+            navigate('/login');  // Redirect to home if logged in
         }
     }, [navigate]);
 
@@ -27,10 +25,10 @@ function Signup() {
         e.preventDefault();
 
         // Check if CAPTCHA is completed
-        // if (!captchaValue) {
-        //     setMessage("Please complete the CAPTCHA.");
-        //     return;
-        // }
+        if (!captchaValue) {
+            setMessage("Please complete the CAPTCHA.");
+            return;
+        }
 
         // Check if passwords match
         if (password !== confirmpass) {
@@ -40,9 +38,8 @@ function Signup() {
 
         // If all validations pass, hit the API
         try {
-            const response = await axios.post('http://127.0.0.1:8000/signup/', {
-                email: email,
-                username: username,
+            const response = await axios.post('http://127.0.0.1:8000/reset/', {
+                token: Cookies.get('token'),
                 password: password
             });
 
@@ -57,13 +54,11 @@ function Signup() {
                 }
                 setMessage(JSON.stringify(messageData));
             } else {
-                setMessage("Signup successful!");
-                Cookies.set('token', response.data.data.token, { expires: 7 });  // Store the token in cookies for 7 days
-                Cookies.set('username', response.data.data.username, { expires: 7 });
-                navigate("/login");
+                setMessage("Reset successful!");
+                navigate("/");
             }
         } catch (error) {
-            setMessage(error.response?.data?.message || "Signup failed. Please try again.");
+            setMessage(error.response?.data?.message || "Reset failed. Please try again.");
         }
     };
 
@@ -71,18 +66,9 @@ function Signup() {
         <>
             <Navb />
             <div className='authenticate-border'>
-                <h1>Sign up</h1>
+                <h1>Reset password</h1>
                 {message && <p>{message}</p>}
                 <Form className='signup-form' onSubmit={handleSignup}>
-                    <Form.Group className="mb-3" controlId="formBasicEmail">
-                        <Form.Label>Email address</Form.Label>
-                        <Form.Control type="email" placeholder="Enter email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="formBasicUsername">
-                        <Form.Label>Username</Form.Label>
-                        <Form.Control type="text" placeholder="Username" required value={username} onChange={(e) => setUsername(e.target.value)} />
-                    </Form.Group>
 
                     <Form.Group className="mb-3" controlId="formBasicPassword">
                         <Form.Label>Password</Form.Label>
@@ -93,14 +79,14 @@ function Signup() {
                         <Form.Label>Re-enter password</Form.Label>
                         <Form.Control type="password" placeholder="Confirm Password" required value={confirmpass} onChange={(e) => setConfirm(e.target.value)} />
                     </Form.Group>
-{/* 
+
                     <ReCAPTCHA
                         sitekey="6LcHKAYrAAAAAGoO9L006SgdCv_00IM--6Q1fiSO"
                         onChange={(value) => setCaptchaValue(value)}
-                    /> */}
+                    />
 
                     <Button variant="primary" type="submit" className='submit'>
-                        Signup
+                        Reset
                     </Button>
                 </Form>
             </div>
@@ -108,4 +94,4 @@ function Signup() {
     );
 }
 
-export default Signup;
+export default Reset;
