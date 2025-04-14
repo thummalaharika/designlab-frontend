@@ -49,7 +49,7 @@ function Navb() {
                     <>
                         <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
                         <Nav.Link onClick={handleReset}>Reset password</Nav.Link>
-                        <Navbar.Brand href="/" style={{"marginLeft":"12px"}}>Weclome, {Cookies.get('username')}</Navbar.Brand>
+                        <Navbar.Brand href="/" style={{"marginLeft":"12px"}}>Welcome, {Cookies.get('username')}</Navbar.Brand>
                     </>
                 }
             </Nav>

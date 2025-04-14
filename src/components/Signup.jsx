@@ -12,7 +12,7 @@ function Signup() {
     const [username, setUsername] = useState("");
     const [password, setPass] = useState("");
     const [confirmpass, setConfirm] = useState("");
-    // const [captchaValue, setCaptchaValue] = useState(null);
+    const [captchaValue, setCaptchaValue] = useState(null);
     const [message, setMessage] = useState("");
     const navigate = useNavigate(); 
 
@@ -27,10 +27,10 @@ function Signup() {
         e.preventDefault();
 
         // Check if CAPTCHA is completed
-        // if (!captchaValue) {
-        //     setMessage("Please complete the CAPTCHA.");
-        //     return;
-        // }
+        if (!captchaValue) {
+            setMessage("Please complete the CAPTCHA.");
+            return;
+        }
 
         // Check if passwords match
         if (password !== confirmpass) {
@@ -93,11 +93,11 @@ function Signup() {
                         <Form.Label>Re-enter password</Form.Label>
                         <Form.Control type="password" placeholder="Confirm Password" required value={confirmpass} onChange={(e) => setConfirm(e.target.value)} />
                     </Form.Group>
-{/* 
+
                     <ReCAPTCHA
                         sitekey="6LcHKAYrAAAAAGoO9L006SgdCv_00IM--6Q1fiSO"
                         onChange={(value) => setCaptchaValue(value)}
-                    /> */}
+                    />
 
                     <Button variant="primary" type="submit" className='submit'>
                         Signup
